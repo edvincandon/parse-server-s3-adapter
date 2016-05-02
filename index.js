@@ -88,8 +88,12 @@ S3AdapterTiny.prototype.createBucket = function() {
 // Returns a promise containing the S3 object creation response
 S3AdapterTiny.prototype.createFile = function(filename, data, contentType) {
   
+  var compressedData;
+  
   tinify.fromBuffer(data).toBuffer(function(err, resultData) {
     if (err) throw err;
+    compressedData = resultData;
+  });
   
   let params = {
     Key: this._bucketPrefix + filename,
@@ -112,7 +116,7 @@ S3AdapterTiny.prototype.createFile = function(filename, data, contentType) {
       });
     });
   });
-  });
+ 
 }
 
 S3AdapterTiny.prototype.deleteFile = function(filename) {
