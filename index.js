@@ -84,6 +84,16 @@ S3AdapterTiny.prototype.createBucket = function() {
   return promise;
 }
 
+S3AdapterTiny.prototype.compressFile = function(data) {
+  var promise = new Promise((resolve, reject) => {
+       tinify.fromBuffer(data).toBuffer(function(err, resultData) {
+          if (err) throw err;
+          resolve(resultData);
+       });
+    });
+  return promise;
+}
+
 
 // For a given config object, filename, and data, store a file in S3
 // Returns a promise containing the S3 object creation response
@@ -101,12 +111,13 @@ S3AdapterTiny.prototype.createFile = function(filename, data, contentType) {
     params.ContentType = contentType;
   }
  
- tinify.fromBuffer(data).toBuffer(function(err, resultData) {
-    if (err) throw err;
-    params.Body = resultData;
-    return S3AdapterTiny.createBucket().then(() => {
+
+    
+  return this.compressFile(data).then((resultData) => {
+    console.log(resultData);
+    return this.createBucket().then(() => {
       return new Promise((resolve, reject) => {
-        S3AdapterTiny._s3Client.upload(params, (err, data) => {
+        this._s3Client.upload(params, (err, data) => {
           if (err !== null) {
             return reject(err);
             console.log(err);
@@ -115,7 +126,8 @@ S3AdapterTiny.prototype.createFile = function(filename, data, contentType) {
         });
       });
     });
- });
+  });
+
  
  
 }
