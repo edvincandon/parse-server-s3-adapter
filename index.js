@@ -84,6 +84,8 @@ S3AdapterTiny.prototype.createBucket = function() {
   return promise;
 }
 
+// for a given data buffer, return a compressed buffer via tinypng API
+// Returns a promise containing the new data buffer
 S3AdapterTiny.prototype.compressFile = function(data) {
   var promise = new Promise((resolve, reject) => {
        tinify.fromBuffer(data).toBuffer(function(err, resultData) {
@@ -114,7 +116,7 @@ S3AdapterTiny.prototype.createFile = function(filename, data, contentType) {
 
     
   return this.compressFile(data).then((resultData) => {
-    console.log(resultData);
+    params.Body = resultData;
     return this.createBucket().then(() => {
       return new Promise((resolve, reject) => {
         this._s3Client.upload(params, (err, data) => {
