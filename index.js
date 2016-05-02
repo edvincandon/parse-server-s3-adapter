@@ -7,7 +7,8 @@ var AWS = require('aws-sdk');
 const DEFAULT_S3_REGION = "us-east-1";
 
 var tinify = require("tinify");
-tinify.key = "WovCZ-GFLukco4BdUabX2XgpERL_p-2l";
+tinify.key = process.env.TINYPNG_API_KEY; // REPLACE WITH YOUR TINYPNG API KEY
+
 
 function requiredOrFromEnvironment(options, key, env) {
   options[key] = options[key] || process.env[env];
