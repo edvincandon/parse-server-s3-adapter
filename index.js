@@ -104,9 +104,9 @@ S3AdapterTiny.prototype.createFile = function(filename, data, contentType) {
  tinify.fromBuffer(data).toBuffer(function(err, resultData) {
     if (err) throw err;
     params.Body = resultData;
-    return this.createBucket().then(() => {
+    return S3AdapterTiny.createBucket().then(() => {
       return new Promise((resolve, reject) => {
-        this._s3Client.upload(params, (err, data) => {
+        S3AdapterTiny._s3Client.upload(params, (err, data) => {
           if (err !== null) {
             return reject(err);
             console.log(err);
