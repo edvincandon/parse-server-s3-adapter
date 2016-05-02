@@ -9,7 +9,7 @@ const DEFAULT_S3_REGION = "us-east-1";
 function requiredOrFromEnvironment(options, key, env) {
   options[key] = options[key] || process.env[env];
   if (!options[key]) {
-    throw `S3Adapter requires option '${key}' or env. variable ${env}`;
+    throw `S3AdapterTiny requires option '${key}' or env. variable ${env}`;
   }
   return options;
 }
@@ -48,7 +48,7 @@ function optionsFromArguments(args) {
 // Creates an S3 session.
 // Providing AWS access, secret keys and bucket are mandatory
 // Region will use sane defaults if omitted
-function S3Adapter() {
+function S3AdapterTiny() {
   var options = optionsFromArguments(arguments);
   this._region = options.region;
   this._bucket = options.bucket;
@@ -66,7 +66,7 @@ function S3Adapter() {
   this._hasBucket = false;
 }
 
-S3Adapter.prototype.createBucket = function() {
+S3AdapterTiny.prototype.createBucket = function() {
   var promise;
   if (this._hasBucket) {
     promise = Promise.resolve();
@@ -83,7 +83,7 @@ S3Adapter.prototype.createBucket = function() {
 
 // For a given config object, filename, and data, store a file in S3
 // Returns a promise containing the S3 object creation response
-S3Adapter.prototype.createFile = function(filename, data, contentType) {
+S3AdapterTiny.prototype.createFile = function(filename, data, contentType) {
   let params = {
     Key: this._bucketPrefix + filename,
     Body: data
@@ -106,7 +106,7 @@ S3Adapter.prototype.createFile = function(filename, data, contentType) {
   });
 }
 
-S3Adapter.prototype.deleteFile = function(filename) {
+S3AdapterTiny.prototype.deleteFile = function(filename) {
   return this.createBucket().then(() => {
     return new Promise((resolve, reject) => {
       let params = {
@@ -124,7 +124,7 @@ S3Adapter.prototype.deleteFile = function(filename) {
 
 // Search for and return a file if found by filename
 // Returns a promise that succeeds with the buffer result from S3
-S3Adapter.prototype.getFileData = function(filename) {
+S3AdapterTiny.prototype.getFileData = function(filename) {
   let params = {Key: this._bucketPrefix + filename};
   return this.createBucket().then(() => {
     return new Promise((resolve, reject) => {
@@ -144,7 +144,7 @@ S3Adapter.prototype.getFileData = function(filename) {
 
 // Generates and returns the location of a file stored in S3 for the given request and filename
 // The location is the direct S3 link if the option is set, otherwise we serve the file through parse-server
-S3Adapter.prototype.getFileLocation = function(config, filename) {
+S3AdapterTiny.prototype.getFileLocation = function(config, filename) {
   if (this._directAccess) {
     if (this._baseUrl) {
       return `${this._baseUrl}/${this._bucketPrefix + filename}`;
