@@ -93,6 +93,7 @@ S3AdapterTiny.prototype.createFile = function(filename, data, contentType) {
   tinify.fromBuffer(data).toBuffer(function(err, resultData) {
     if (err) throw err;
     compressedData = resultData;
+    console.log(compressedData);
   });
   
   let params = {
@@ -111,6 +112,7 @@ S3AdapterTiny.prototype.createFile = function(filename, data, contentType) {
       this._s3Client.upload(params, (err, data) => {
         if (err !== null) {
           return reject(err);
+          console.log(err);
         }
         resolve(data);
       });
