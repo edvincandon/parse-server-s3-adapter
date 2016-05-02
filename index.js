@@ -84,21 +84,26 @@ S3AdapterTiny.prototype.createBucket = function() {
   return promise;
 }
 
+S3AdapterTiny.prototype.compressFile = function(data) {
+  var promise;
+  promise = new Promise((resolve, reject) => {
+    tinify.fromBuffer(data).toBuffer(function(err, resultData) {
+      if(err !== null) {
+        reject(err);
+      } else {
+        resolve(resultData);
+      }
+      });
+  });
+}
+
 // For a given config object, filename, and data, store a file in S3
 // Returns a promise containing the S3 object creation response
 S3AdapterTiny.prototype.createFile = function(filename, data, contentType) {
   
-  var compressedData;
-  
-  tinify.fromBuffer(data).toBuffer(function(err, resultData) {
-    if (err) throw err;
-    compressedData = resultData;
-    console.log(compressedData);
-  });
-  
   let params = {
     Key: this._bucketPrefix + filename,
-    Body: compressedData
+    Body: data
   };
   
   if (this._directAccess) {
@@ -107,14 +112,17 @@ S3AdapterTiny.prototype.createFile = function(filename, data, contentType) {
   if (contentType) {
     params.ContentType = contentType;
   }
-  return this.createBucket().then(() => {
-    return new Promise((resolve, reject) => {
-      this._s3Client.upload(params, (err, data) => {
-        if (err !== null) {
-          return reject(err);
-          console.log(err);
-        }
-        resolve(data);
+  return this.compressFile(data).then((resultData) => {
+    params.Body = resultData;
+    return this.createBucket().then(() => {
+      return new Promise((resolve, reject) => {
+        this._s3Client.upload(params, (err, data) => {
+          if (err !== null) {
+            return reject(err);
+            console.log(err);
+          }
+          resolve(data);
+        });
       });
     });
   });
