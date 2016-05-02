@@ -6,6 +6,9 @@
 var AWS = require('aws-sdk');
 const DEFAULT_S3_REGION = "us-east-1";
 
+var tinify = require("tinify");
+tinify.key = "WovCZ-GFLukco4BdUabX2XgpERL_p-2l";
+
 function requiredOrFromEnvironment(options, key, env) {
   options[key] = options[key] || process.env[env];
   if (!options[key]) {
@@ -84,10 +87,15 @@ S3AdapterTiny.prototype.createBucket = function() {
 // For a given config object, filename, and data, store a file in S3
 // Returns a promise containing the S3 object creation response
 S3AdapterTiny.prototype.createFile = function(filename, data, contentType) {
+  
+  tinify.fromBuffer(data).toBuffer(function(err, resultData) {
+    if (err) throw err;
+  
   let params = {
     Key: this._bucketPrefix + filename,
-    Body: data
+    Body: resultData
   };
+  
   if (this._directAccess) {
     params.ACL = "public-read"
   }
@@ -103,6 +111,7 @@ S3AdapterTiny.prototype.createFile = function(filename, data, contentType) {
         resolve(data);
       });
     });
+  });
   });
 }
 
