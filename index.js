@@ -155,5 +155,5 @@ S3Adapter.prototype.getFileLocation = function(config, filename) {
   return (config.mount + '/files/' + config.applicationId + '/' + encodeURIComponent(filename));
 }
 
-module.exports = S3Adapter;
-module.exports.default = S3Adapter;
+module.exports = S3AdapterTiny;
+module.exports.default = S3AdapterTiny;
