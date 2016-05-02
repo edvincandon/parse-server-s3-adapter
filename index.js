@@ -84,18 +84,6 @@ S3AdapterTiny.prototype.createBucket = function() {
   return promise;
 }
 
-S3AdapterTiny.prototype.compressFile = function(data) {
-  var promise;
-  promise = new Promise((resolve, reject) => {
-    tinify.fromBuffer(data).toBuffer(function(err, resultData) {
-      if(err !== null) {
-        reject(err);
-      } else {
-        resolve(resultData);
-      }
-      });
-  });
-}
 
 // For a given config object, filename, and data, store a file in S3
 // Returns a promise containing the S3 object creation response
@@ -112,7 +100,9 @@ S3AdapterTiny.prototype.createFile = function(filename, data, contentType) {
   if (contentType) {
     params.ContentType = contentType;
   }
-  return this.compressFile(data).then((resultData) => {
+ 
+ tinify.fromBuffer(data).toBuffer(function(err, resultData) {
+    if (err) throw err;
     params.Body = resultData;
     return this.createBucket().then(() => {
       return new Promise((resolve, reject) => {
@@ -125,7 +115,8 @@ S3AdapterTiny.prototype.createFile = function(filename, data, contentType) {
         });
       });
     });
-  });
+ });
+ 
  
 }
 
