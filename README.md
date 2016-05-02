@@ -4,6 +4,8 @@
 
 parse-server adapter for AWS S3
 
+TINYPNG COMPRESSION IMPLEMENTATION before upload
+
 # installation
 
 `npm install --save parse-server-s3-adapter`
