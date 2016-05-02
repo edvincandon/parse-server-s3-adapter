@@ -97,7 +97,7 @@ S3AdapterTiny.prototype.createFile = function(filename, data, contentType) {
   
   let params = {
     Key: this._bucketPrefix + filename,
-    Body: resultData
+    Body: compressedData
   };
   
   if (this._directAccess) {
