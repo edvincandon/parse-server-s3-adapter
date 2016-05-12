@@ -5,7 +5,7 @@
 parse-server adapter for AWS S3
 
 TINYPNG COMPRESSION IMPLEMENTATION before upload
-** considering uploads will only be .png or .jpeg files **
+<strong>considering uploads will only be .png or .jpeg files</strong>
 
 # installation
 
