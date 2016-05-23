@@ -141,6 +141,7 @@ S3AdapterTiny.prototype.deleteFile = function(filename) {
       let params = {
         Key: this._bucketPrefix + filename
       };
+      console.log(params);
       this._s3Client.deleteObject(params, (err, data) =>{
         if(err !== null) {
           return reject(err);
